@@ -9,10 +9,14 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Instala solo las dependencias de ejecución (Flask y Gunicorn)
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --only-binary :all: -r requirements.txt
 
 # Copia el código de la aplicación (solo la carpeta app)
 COPY app/ ./app/
+
+# Crea un usuario sin privilegios para ejecutar la aplicación
+RUN useradd --create-home --shell /usr/sbin/nologin appuser
+USER appuser
 
 # Expón el puerto en el que Gunicorn servirá la aplicación
 EXPOSE 8000
